@@ -1,0 +1,45 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Chatbot</title>
+    <style>
+        /* Add your CSS styles here */
+    </style>
+</head>
+<body>
+    <div id="chatbox">
+        <div id="chatbox-messages"></div>
+        <input type="text" id="user-input" placeholder="Type a message...">
+        <button onclick="sendMessage()">Send</button>
+    </div>
+
+    <script>
+        function sendMessage() {
+            var userInput = document.getElementById("user-input").value;
+            document.getElementById("chatbox-messages").innerHTML += "<div>You: " + userInput + "</div>";
+            
+            // Send user message to server for processing
+            fetch('/process_message', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({ message: userInput }),
+            })
+            .then(response => response.json())
+            .then(data => {
+                var botResponse = data.response;
+                document.getElementById("chatbox-messages").innerHTML += "<div>Bot: " + botResponse + "</div>";
+            })
+            .catch(error => {
+                console.error('Error:', error);
+            });
+
+            // Clear input field after sending message
+            document.getElementById("user-input").value = "";
+        }
+    </script>
+</body>
+</html>
